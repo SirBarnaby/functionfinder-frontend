@@ -33,35 +33,35 @@ export interface User {
  */
 class AuthService {
   private apiClient = ApiClient.getInstance();
-  
+
   /**
    * Login a user
    */
   async login(username: string, password: string): Promise<AuthResponse> {
     try {
       console.log('Attempting login with direct axios call to bypass ApiClient');
-      
+
       // Create payload with username and password
       const payload = { username, password };
-      
+
       // Make a direct axios call to the endpoint
       const response = await axios.post<ApiAuthResponse>(
-        'http://localhost:5151/api/Auth/login?api-version=1', 
+        'http://backend:5151/api/Auth/login?api-version=1',
         payload,
         { headers: { 'Content-Type': 'application/json' } }
       );
-      
+
       console.log('Login successful with direct axios call', response.data);
-      
+
       // Extract the actual userId value - it could be a nested object or a simple value
       let actualUserId = username; // Default to username as fallback
-      
+
       if (response.data.userId) {
         // If it's a nested object with an 'id' field
         if (typeof response.data.userId === 'object' && response.data.userId.id) {
           actualUserId = response.data.userId.id;
           console.log('Extracted userId from nested object:', actualUserId);
-        } 
+        }
         // If it's a nested object with some other structure, try to get the first property
         else if (typeof response.data.userId === 'object') {
           const firstProp = Object.keys(response.data.userId)[0];
@@ -76,7 +76,7 @@ class AuthService {
           console.log('Using userId directly:', actualUserId);
         }
       }
-      
+
       // Transform the API response to match our expected AuthResponse format
       const authResponse = {
         username: username, // We have the username from the request
@@ -85,7 +85,7 @@ class AuthService {
         message: 'Login successful',
         userId: actualUserId
       };
-      
+
       console.log('Returning auth response with userId:', authResponse.userId);
       return authResponse;
     } catch (error) {
@@ -100,35 +100,35 @@ class AuthService {
       };
     }
   }
-  
+
   /**
    * Register a new user
    */
   async register(username: string, password: string): Promise<AuthResponse> {
     try {
       console.log('Attempting registration with direct axios call to bypass ApiClient');
-      
+
       // Create payload with username and password
       const payload = { username, password };
-      
+
       // Make a direct axios call to the endpoint
       const response = await axios.post<ApiAuthResponse>(
-        'http://localhost:5151/api/Auth/register?api-version=1', 
+        'http://backend:5151/api/Auth/register?api-version=1',
         payload,
         { headers: { 'Content-Type': 'application/json' } }
       );
-      
+
       console.log('Registration successful with direct axios call', response.data);
-      
+
       // Extract the actual userId value - it could be a nested object or a simple value
       let actualUserId = username; // Default to username as fallback
-      
+
       if (response.data.userId) {
         // If it's a nested object with an 'id' field
         if (typeof response.data.userId === 'object' && response.data.userId.id) {
           actualUserId = response.data.userId.id;
           console.log('Extracted userId from nested object:', actualUserId);
-        } 
+        }
         // If it's a nested object with some other structure, try to get the first property
         else if (typeof response.data.userId === 'object') {
           const firstProp = Object.keys(response.data.userId)[0];
@@ -143,7 +143,7 @@ class AuthService {
           console.log('Using userId directly:', actualUserId);
         }
       }
-      
+
       // Transform the API response to match our expected AuthResponse format
       return {
         username: username, // We have the username from the request
